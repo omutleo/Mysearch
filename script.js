@@ -2,9 +2,14 @@ document.getElementById('search-button').addEventListener('click', function() {
     const query = document.getElementById('search-input').value.toLowerCase();
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = '';
-    
+
     fetch('articles.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const results = data.articles.filter(article => 
                 article.title.toLowerCase().includes(query) || 
@@ -21,5 +26,8 @@ document.getElementById('search-button').addEventListener('click', function() {
                 resultsContainer.innerHTML = '<p>No articles found</p>';
             }
         })
-        .catch(error => console.error('Error fetching articles:', error));
+        .catch(error => {
+            console.error('Error fetching articles:', error);
+            resultsContainer.innerHTML = '<p>Error fetching articles</p>';
+        });
 });
