@@ -1,0 +1,13 @@
+{
+    "articles": [
+        {
+            "title": "First Article",
+            "content": "This is the content of the first article."
+        },
+        {
+            "title": "Second Article",
+            "content": "This is the content of the second article."
+        }
+        // Add more articles as needed
+    ]
+}
