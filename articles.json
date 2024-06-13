@@ -1,16 +1,176 @@
 {
     "articles": [
         {
-            "title": "First Article",
-            "content": "This is the content of the first article. It provides an introduction to the topic."
+            "title": "Да, поставим",
+            "content": "Сайт: http://www.da-postavim.ru/\nОборудование: Техника автоматизации\nКонтактное лицо: Мария ИВЬЕВА\nПочта: sale9@da-postavim.ru\nКомментарии: Endress+ Hauser, PARKER, Phoenix contact, Rockwell, Siemens, ABB, Schneider Electric, Allen-Bradley, Omron, Tetra Pak, Alfa Laval, Wago, Fanuc, Sick, Pepper+Fuchs, Norgen, IFM, Balluff, FESTO, Rittal, SEW-Eurodrive, Danfoss, B&R, Emerson,  PILZ"
         },
         {
-            "title": "Second Article",
-            "content": "This is the content of the second article. It includes more detailed information."
+            "title": "Вент-Эл",
+            "content": "Сайт: https://vent-el.ru/\nОборудование: Техника автоматизации\nКонтактное лицо: Александр Васьков\nПочта: 415@vent-el.ru\nКомментарии: ФМР, ФРНК, ППУ, ФПП\nКондиционеры, сплит-системы - Haier, Lessar, Quattroclima, Tosot, Fujitsu, BALLU, Electrolux\nДренажные помпы - SAUERMANN, Aspen, Siccom\nПневматическое оборудование - фитинги, цилиндры, трубки, отводы, присоски, распределители: SMC, FESTO, MacValves, CAMOZZI\nРемни приводные - SPA, SPB, XPZ\nВентиляторы - EBMPAPST, Ostberg, SHUFT, Systemair, ВКК, ВР-80, ВР-75, ВР 86-77\nВоздуховоды, фасонные элементы\nЭлектрика - автоматы ABB, Schneider Electric, лампы и светильники Philips, Osram, Foton, кабель ВВГ, NYM, ПВС, ШВВП\nЭлектроприводы - Belimo, Lufberg, ENSO, Nanotek, Двигатели - АИР, АИС, Siemens, Теплообменники, калориферы КСк, КПсК"
         },
         {
-            "title": "Third Article",
-            "content": "This is the content of the third article. It concludes the discussion."
+            "title": "ООО \"Глобал автоматикс\"",
+            "content": "Сайт: nan\nОборудование: Техника автоматизации\nКонтактное лицо: Евгения Коваленко\nПочта: e.kovalenko@simatix.ru\nКомментарии: Siemens, Phoenix contact, SICK, Schneider Electric, АВВ, Pepperl+fuchs,  Rittal, WAGO, Beckhoff, SEW Eurodrive"
+        },
+        {
+            "title": "Корвет-Нева",
+            "content": "Сайт: http://www.korvet-neva.ru/\nОборудование: Оснащение лабораторий\nКонтактное лицо: Никита Игоревич Зезуль\nПочта: nikita.korvet-neva@mail.ru\nКомментарии: оснащением лабораторий различного профиля"
+        },
+        {
+            "title": "Миллаб",
+            "content": "Сайт: https://millab.ru/\nОборудование: Оснащение лабораторий\nКонтактное лицо: Максим Стрелков\nПочта: mas@millab.ru\nКомментарии: Наша компания является авторизированным дистрибьютором лабораторного, аналитического и промышленного оборудования. Я специализируюсь на вакуумном и климатическом оборудовании."
+        },
+        {
+            "title": "ХимМед",
+            "content": "Сайт: nan\nОборудование: Хим реактивы\nКонтактное лицо: Кондратьев Алексей\nПочта: chimmed@mail.ru\nКомментарии: Хим реактивы, Смесь Pesticide Mix of 12 comp. 2133,2 mg/l 10 х 10 мл PSTMIX0055."
+        },
+        {
+            "title": "Реарус ",
+            "content": "Сайт: https://rearus.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@rearus.ru\nКомментарии: Химические реактивы и растворители как отечественных, так и иностранных производителей для всего спектра лабораторных исследований. Лабораторные весы.\nАналитические приборы и хроматография.\nЭлектро-химические приборы.\nАнализаторы влажности.\nАвтоматические дозаторы."
+        },
+        {
+            "title": "ChemExpress",
+            "content": "Сайт: https://chem-ex.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@chem-ex.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары\n"
+        },
+        {
+            "title": "LabStore ",
+            "content": "Сайт: https://labstore.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: mail@labstore.ru\nКомментарии: Химические реактивы и растворители как отечественных, так и иностранных производителей для всего спектра лабораторных исследований. Лабораторные весы.\nАналитические приборы и хроматография.\nЭлектро-химические приборы.\nАнализаторы влажности.\nАвтоматические дозаторы."
+        },
+        {
+            "title": "Лен Реактив",
+            "content": "Сайт: https://lenreactiv.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@lenreactiv.ru\nКомментарии: Химические реактивы и растворители"
+        },
+        {
+            "title": "Гранада ",
+            "content": "Сайт: https://granada-lab.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@granada-lab.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "НаукаShop ",
+            "content": "Сайт: https://nauka-shop.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@nauka-shop.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "Пущинские",
+            "content": "Сайт: https://www.laboratorii.com/ \nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@laboratorii.com\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "Гермеон ",
+            "content": "Сайт: https://germeon.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: magazin@germeon.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "Реаторг",
+            "content": "Сайт: https://www.reatorg.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: savina@reatorg.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "Диа-М ",
+            "content": "Сайт: https://www.dia-m.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@dia-m.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "Формула(Formula) ",
+            "content": "Сайт: https://formula-re.ru/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: Store@formula-re.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "РеактивШоп",
+            "content": "Сайт: https://www.reaktivshop.ru/ \nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: info@reaktivshop.ru\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "АльфаЛаб",
+            "content": "Сайт: https://cleanroomshop.ru/\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info1@alfa-lab.com\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "ХимБаза ",
+            "content": "Сайт: https://himbaza.com/\nОборудование: Хим реактивы\nКонтактное лицо: Менеджер продаж\nПочта: zakaz@himbaza.com\nКомментарии: Химические реактивы и растворители посуда"
+        },
+        {
+            "title": "МиниМед",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@minimed.ru\nКомментарии: колбы, пипетки, мензурки, посуда и оснащение"
+        },
+        {
+            "title": "Симакс",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@simax.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "ЭталонТара",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@etalon-tara.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "Экросхим",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: sale@ecohim.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "ЛабГипермарк",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: shop+6134910@5drops.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "Энергоник ",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: sales@energonic.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "ApexLab",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@apexlab.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "Русхим",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@rushim.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "NikoLAb",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@nikolab.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "LAB REAKTIV ",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: zakaz@labreaktiv.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "ООО \"ПСК\"",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Далер Гадоев\nПочта: dgadoev@yandex.ru\nКомментарии: Насосное оборудование, Теплообменники, Автоматика, Запорная арматура"
+        },
+        {
+            "title": "fixzip.ru",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Менеджер продаж\nПочта: info@fixzip.ru\nКомментарии: Запчасти Miele"
+        },
+        {
+            "title": "https://www.et-e.ru/",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Николай\nПочта: sale2@eu-t-o.ru\nКомментарии: Закупки трудных запчастей из-за границы"
+        },
+        {
+            "title": "pnevmex",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Менеджер продаж\nПочта: 9724704@mail.ru\nКомментарии: Пневмораспределитель"
+        },
+        {
+            "title": "sibpnevmo",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Менеджер продаж\nПочта: sibpnevmo@ya.ru\nКомментарии: Пневмораспределитель"
+        },
+        {
+            "title": "чип дип",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Менеджер продаж\nПочта: sales@chipdip.ru\nКомментарии: Запчасти для техники и электроники"
+        },
+        {
+            "title": "privod-ufa.ru",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Менеджер продаж\nПочта: sales@privod-ufa.ru\nКомментарии: Autonics, Camozzi, Delta Battery, Delta Electronics, Inc\nSMC, Festo, Innovert, Innolevel, Innovari, Innocont, IDS Drive, Instart, Kipvalve, Piezus, Weintek, Веспер, Кипприбор, Мегеон, Мотор-редукторы, Овен, Прома, Росма, Рэлсиб, Термодат, Физтех, Электродвигатели"
+        },
+        {
+            "title": "kolba24.ru",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: contract@kolba24.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "pipetman.ru",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@pipetman.ru\nКомментарии: Eppendorf, Ленпипет, Biohit, Vitlab"
+        },
+        {
+            "title": "nikolab.ru",
+            "content": "Сайт: nan\nОборудование: Оснащение лабораторий\nКонтактное лицо: Менеджер продаж\nПочта: info@nikolab.ru\nКомментарии: Лабораторная посуда Лабораторное оборудование Лабораторные аксессуары"
+        },
+        {
+            "title": "https://industriation.ru/",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Артём Казьмин\nПочта: azk@industriation.ru\nКомментарии: Пневматическое оборудование Пневматическое оборудование Festo - Продолжаем поставки всей линейки.\nNaval Compressors - американская пневматика, поддерживаемая на складе на постоянной основе.\nПневматическое оборудование Camozzi, SMC, XCPC, Pneumax и т.д.\nЗапорная и трубопроводная арматура Genebre, Zetkama, Rushwork - поддерживаем большой складской запас;\nКонтрольно-измерительное оборудование ОВЕН - поставляем оборудование напрямую с завода в минимальные сроки;\nОригинальные подшипники SKF, FAG, ISB - более 10 000 наименований;\nУзлы машин (цепи, звездочки, шкивы, ремни и т.д.) - поставляем оборудование производителей CHIARAVALLI, PIZZIRANI, SIT, ТЕК-КОМ."
+        },
+        {
+            "title": "https://www.stepmotor.ru/",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Максим Виноградов\nПочта: sale2@stepmotor.ru\nКомментарии: SEW Eurodrive, Grundfoss, Siemens, Sick, Omron, ABB, Allen-Bradley, Schneider Electric, Telemecanique, Phoenix Contact,  Kollmorgen, Endress+Hauser, B&R, Pepper+Fuchs, General Electric, Emerson Rosemount, EagleBurgmann, Bihl+Wiedemann, Bei Sensors, HBM Messtechnik, HYDAC, Stromag, Anderson Negele, WAGO (клеммы)"
+        },
+        {
+            "title": "ООО \"КДП\" https://cficom.ru/",
+            "content": "Сайт: nan\nОборудование: Запчасти\nКонтактное лицо: Ермаков Егор\nПочта: ermakov.e@cficom.ru\nКомментарии: Ace Controls\nAirCom Pneumatic GmbH\nAirTac\nAnalysis\nASM\nAZ Pneumatica\nB\nBansbach easylift GmbH\nBILZ\nBRECO\nBrevetti Stendalto\nBST eltromat International GmbH\nC\nCangzhou dongjun machinery\nCEJN\nCENTA\nConti\nCZAKI Thermo-Product\nD\nDestaco\nE\nEkd gelenkrohr GmbH\nELESA+GANTER\nF\nFiama\nFLUCOM\nFUJI LATEX\nH\nHAHN\nI\nIGUS\nInsert Deal\nInterroll\nITT Enidine\nK\nKIPP\nKOBA Co. Ltd.\nKOGANEI\nKorea Hoist Co., Ltd.\nKOREEL\nKUKAMET\nL\nLegris\nLeschhorn\nM\nMecVel\nMINGARDI\nMISUMI\nMulco Europe EWIV\nN\nNeugart\nO\nOilgear\nOsculati\nOtto Ganter GmbH & Co.KG\nP\nPaguflex\nPEI\nPIAB\nR\nR+W Antriebselemente GmbH\nRollven\nRose+Krieger\nRulmeca\nS\nSamkook Industrial Co., Ltd.\nSejin\nSGF\nSTABILUS\nSuspa\nT\nTollok\nW\nWandfluh\nWeforma\nZ\nZhenan"
         }
     ]
 }
