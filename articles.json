@@ -2,12 +2,15 @@
     "articles": [
         {
             "title": "First Article",
-            "content": "This is the content of the first article."
+            "content": "This is the content of the first article. It provides an introduction to the topic."
         },
         {
             "title": "Second Article",
-            "content": "This is the content of the second article."
+            "content": "This is the content of the second article. It includes more detailed information."
+        },
+        {
+            "title": "Third Article",
+            "content": "This is the content of the third article. It concludes the discussion."
         }
-        // Add more articles as needed
     ]
 }
