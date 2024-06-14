@@ -19,7 +19,8 @@ document.getElementById('search-button').addEventListener('click', function() {
             if (results.length > 0) {
                 results.forEach(article => {
                     const articleElement = document.createElement('div');
-                    articleElement.innerHTML = `<h2>${article.title}</h2><p>${article.content}</p>`;
+                    const formattedContent = article.content.replace(/\n/g, '<br>');
+                    articleElement.innerHTML = `<h2>${article.title}</h2><p>${formattedContent}</p>`;
                     resultsContainer.appendChild(articleElement);
                 });
             } else {
