@@ -19,7 +19,9 @@ document.getElementById('search-button').addEventListener('click', function() {
             if (results.length > 0) {
                 results.forEach(article => {
                     const articleElement = document.createElement('div');
-                    const formattedContent = article.content.replace(/\n/g, '<br>');
+                    const formattedContent = article.content
+                        .replace(/\n/g, '<br>')
+                        .replace(/Почта:/g, '<strong>Почта:</strong>'); // Добавление тега <strong> вокруг "Почта:"
                     articleElement.innerHTML = `<h2>${article.title}</h2><p>${formattedContent}</p>`;
                     resultsContainer.appendChild(articleElement);
                 });
