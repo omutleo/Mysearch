@@ -21,8 +21,8 @@ document.getElementById('search-button').addEventListener('click', function() {
                     const articleElement = document.createElement('div');
                     const formattedContent = article.content
                         .replace(/\n/g, '<br>')
-                        .replace(/Почта:/g, '<strong>Почта:</strong>') // Добавление тега <strong> вокруг "Почта:"
-                        .replace(/Контактное лицо:/g, '<strong>Контактное лицо:</strong>');
+                        .replace(/(Почта:.*?)(<br>|$)/g, '<strong>$1</strong>') // Выделение жирным "Почта:" и значения до конца строки или до <br>
+                        .replace(/(Контактное лицо:.*?)(<br>|$)/g, '<strong>$1</strong>'); // Выделение жирным "Контактное лицо:" и значения до конца строки или до <br>
                     articleElement.innerHTML = `<h2>${article.title}</h2><p>${formattedContent}</p>`;
                     resultsContainer.appendChild(articleElement);
                 });
