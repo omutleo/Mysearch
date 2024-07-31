@@ -287,6 +287,10 @@
         {
             "title": "ТрекМарк",
             "content": "Сайт: https://trekmark.ru/\nОборудование: Оборудование\nКонтактное лицо: Виктор Бабенцев\nПочта: v.babencev@trekmark.ru\nКомментарии: Верификатор , работа с data matrix , qr , штрих - код "
+        },
+        {
+            "title": "Руссотех",
+            "content": "Сайт: http://russotex.com/\nОборудование: Запчасти\nКонтактное лицо: Никита Аксенов\nПочта: ana@russotex.com\nКомментарии: Siemens, Phoenix contact, SICK, festo "
         }
     ]
 }
