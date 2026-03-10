@@ -50,13 +50,16 @@ function parseCSV(text) {
             obj[header] = values[index] || '';
         });
         
-        const supplier = {
-            name: obj.name || obj.название || obj.поставщик || '',
-            equipment: obj.equipment || obj.категория || obj.оборудование || '',
-            contact: obj.contact || obj.контакт || obj.контактное_лицо || '',
-            email: obj.email || obj.почта || obj.e_mail || '',
-            comments: obj.comments || obj.комментарии || obj.примечание || ''
-        };
+       // Функция очистки: триммирует и убирает лишние пробелы
+const clean = (val) => (val || '').toString().trim().replace(/\s+/g, ' ');
+
+const supplier = {
+    name: clean(obj.name || obj.название || obj.поставщик),
+    equipment: clean(obj.equipment || obj.категория || obj.оборудование),
+    contact: clean(obj.contact || obj.контакт || obj.контактное_лицо),
+    email: clean(obj.email || obj.почта || obj.e_mail),
+    comments: clean(obj.comments || obj.комментарии || obj.примечание)
+};
         
         if (supplier.name || supplier.equipment) {
             result.push(supplier);
