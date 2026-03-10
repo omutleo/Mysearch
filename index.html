@@ -1,0 +1,133 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База поставщиков HTec</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app-screen" class="hidden">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="brand">
+                    <span class="logo-h">H</span><span class="logo-tec">Tec</span>
+                </div>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="global-search" placeholder="Поиск поставщика, оборудования, контактов...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-supplier-btn">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                    <button class="btn btn-secondary" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Выход
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- DASHBOARD -->
+            <div id="dashboard-view">
+                <h1 class="page-title">База поставщиков</h1>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-suppliers">0</span>
+                        <span class="stat-label">Всего поставщиков</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-categories">0</span>
+                        <span class="stat-label">Категорий</span>
+                    </div>
+                    <div class="stat-item">
+                        <button class="btn btn-secondary btn-small" id="refresh-btn">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+                <div id="loading-indicator" class="hidden">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка данных...
+                </div>
+                <h2 class="section-title">Категории оборудования</h2>
+                <div class="categories-grid" id="categories-container"></div>
+            </div>
+
+            <!-- CATEGORY VIEW -->
+            <div id="category-view" class="hidden">
+                <div class="category-header">
+                    <button class="btn-back" id="back-to-dashboard">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 class="category-title-large" id="current-category-title">Название категории</h2>
+                        <p class="category-count" id="current-category-count">0 поставщиков</p>
+                    </div>
+                </div>
+                <div class="suppliers-list" id="suppliers-container"></div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2024 HTec. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <!-- ADD SUPPLIER MODAL -->
+    <div id="add-supplier-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Добавить поставщика</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form id="add-supplier-form">
+                <div class="form-group">
+                    <label for="supplier-name">Наименование поставщика *</label>
+                    <input type="text" id="supplier-name" required placeholder="ООО 'Пример'">
+                </div>
+                <div class="form-group">
+                    <label for="supplier-equipment">Оборудование (Категория) *</label>
+                    <select id="supplier-equipment" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="Техника автоматизации">Техника автоматизации</option>
+                        <option value="Оснащение лабораторий">Оснащение лабораторий</option>
+                        <option value="Хим реактивы">Хим реактивы</option>
+                        <option value="Запчасти">Запчасти</option>
+                        <option value="Оборудование">Оборудование</option>
+                        <option value="Масло">Масло</option>
+                        <option value="Уплотнения">Уплотнения</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="supplier-contact">Контактное лицо</label>
+                    <input type="text" id="supplier-contact" placeholder="Иванов Иван 8-900-000-00-00">
+                </div>
+                <div class="form-group">
+                    <label for="supplier-email">Почта</label>
+                    <input type="email" id="supplier-email" placeholder="info@example.ru">
+                </div>
+                <div class="form-group">
+                    <label for="supplier-comments">Комментарии (слова для поиска)</label>
+                    <textarea id="supplier-comments" rows="4" placeholder="Бренды, продукция, ключевые слова для поиска..."></textarea>
+                    <small class="form-hint">Эти данные не отображаются на сайте, но участвуют в поиске</small>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="modal-cancel">Отмена</button>
+                    <button type="submit" class="btn btn-primary" id="save-supplier-btn">
+                        <i class="fas fa-save"></i> Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div id="notification" class="notification hidden"></div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
