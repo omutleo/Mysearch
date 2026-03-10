@@ -1,37 +1,23 @@
-// script.js - Основной функционал приложения
+// script.js - Логика приложения
 // ============================================
 
-// Глобальные переменные
 let currentCategory = null;
 let allSuppliers = [];
-let loginScreen = null;
-let loginForm = null;
-let loginError = null;
-let appScreen = null;
-let logoutBtn = null;
-let globalSearch = null;
-let dashboardView = null;
-let categoryView = null;
-let categoriesContainer = null;
-let suppliersContainer = null;
-let currentCategoryTitle = null;
-let currentCategoryCount = null;
-let backToDashboard = null;
-let totalSuppliersEl = null;
-let totalCategoriesEl = null;
-let loginModal = null;
-let loginFormModal = null;
-let loginErrorModal = null;
+
+// DOM Elements
+let loginScreen, loginForm, loginError, appScreen, logoutBtn, globalSearch;
+let dashboardView, categoryView, categoriesContainer, suppliersContainer;
+let currentCategoryTitle, currentCategoryCount, backToDashboard;
+let totalSuppliersEl, totalCategoriesEl, loginModal, loginFormModal, loginErrorModal;
 
 // ============================================
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async function() {
-    // Загружаем данные из CSV
+    // Ждём загрузки данных из data.js
     await loadDatabase();
     allSuppliers = database;
     
-    // Определяем страницу
     loginScreen = document.getElementById('login-screen');
     appScreen = document.getElementById('app-screen');
     loginModal = document.getElementById('login-modal');
@@ -111,6 +97,7 @@ function initAppPage() {
     if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
     if (backToDashboard) backToDashboard.addEventListener('click', showDashboard);
     if (globalSearch) globalSearch.addEventListener('input', handleSearch);
+    
     if (loginFormModal) {
         loginFormModal.addEventListener('submit', function(e) {
             e.preventDefault();
