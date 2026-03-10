@@ -66,39 +66,19 @@ function parseCSV(text) {
     return result;
 }
 
-// Загрузка данных
+/ Основная функция загрузки данных
 async function loadDatabase() {
     try {
         console.log('📥 Загрузка данных из Google Sheets...');
         
+        // ВАЖНО: Не добавляем кастомные заголовки, чтобы не вызывать CORS preflight
         const response = await fetch(CSV_URL, { 
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
+            cache: 'no-store'  // Это безопасно и не вызывает preflight
         });
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const csvText = await response.text();
-        database = parseCSV(csvText);
-        dataLoaded = true;
-        
-        console.log(`✅ Загружено ${database.length} поставщиков`);
-        return database;
-        
-    } catch (error) {
-        console.error('❌ Ошибка загрузки данных:', error);
-        database = [];
-        dataLoaded = true;
-        return [];
+…        return [];
     }
 }
-
 // Иконки категорий
 const categoryIcons = {
     "Техника автоматизации": "fa-cogs",
