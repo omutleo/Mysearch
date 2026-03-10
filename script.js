@@ -181,16 +181,28 @@ function getSuppliersByCategory(category) {
     return database.filter(item => item.equipment === category);
 }
 
+// ============================================
+// SEARCH - Ищет по ВСЕМ полям включая comments
+// ============================================
 function searchSuppliers(query) {
-    if (!database) return [];
-    const q = query.toLowerCase();
-    return database.filter(item =>
-        (item.name && item.name.toLowerCase().includes(q)) ||
-        (item.equipment && item.equipment.toLowerCase().includes(q)) ||
-        (item.contact && item.contact.toLowerCase().includes(q)) ||
-        (item.email && item.email.toLowerCase().includes(q)) ||
-        (item.comments && item.comments.toLowerCase().includes(q))
-    );
+    if (!database || database.length === 0) return [];
+    
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return [];
+    
+    return database.filter(item => {
+        // Безопасно получаем значения, триммируем и приводим к нижнему регистру
+        const fields = [
+            item.name,
+            item.equipment, 
+            item.contact,
+            item.email,
+            item.comments  // Теперь и comments ищется!
+        ].map(val => (val || '').toString().toLowerCase().trim());
+        
+        // Проверяем, содержится ли запрос в любом из полей
+        return fields.some(field => field.includes(lowerQuery));
+    });
 }
 
 // ============================================
