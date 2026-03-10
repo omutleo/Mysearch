@@ -142,6 +142,8 @@ function showLoginModal() {
 // APP DISPLAY FUNCTIONS
 // ============================================
 async function showApp() {
+    const loadingScreen = document.getElementById('loading-screen');
+if (loadingScreen) loadingScreen.classList.remove('hidden');
     // 1. Сначала загружаем данные из Google Таблицы
     await loadDatabase();
     
@@ -155,6 +157,9 @@ async function showApp() {
 
     // Render categories
     renderCategories();
+        if (loadingScreen) {
+    setTimeout(() => loadingScreen.classList.add('hidden'), 500);
+}
 }
 // ============================================
 // DATA FUNCTIONS
