@@ -1,10 +1,11 @@
 // script.js - Основной функционал приложения
+// ============================================
 
 // ============================================
 // STATE & DOM ELEMENTS
 // ============================================
 let currentCategory = null;
-let allSuppliers = database;
+let database = [];
 
 // DOM Elements
 let loginScreen = null;
@@ -68,14 +69,53 @@ function initLoginPage() {
 // APP PAGE INITIALIZATION
 // ============================================
 async function initAppPage() {
-    // ... (получение DOM элементов остается без изменений) ...
+    // Get DOM elements
     logoutBtn = document.getElementById('logout-btn');
     globalSearch = document.getElementById('global-search');
     dashboardView = document.getElementById('dashboard-view');
     categoryView = document.getElementById('category-view');
     categoriesContainer = document.getElementById('categories-container');
-…}
-
+    suppliersContainer = document.getElementById('suppliers-container');
+    currentCategoryTitle = document.getElementById('current-category-title');
+    currentCategoryCount = document.getElementById('current-category-count');
+    backToDashboard = document.getElementById('back-to-dashboard');
+    totalSuppliersEl = document.getElementById('total-suppliers');
+    totalCategoriesEl = document.getElementById('total-categories');
+    loginModal = document.getElementById('login-modal');
+    loginFormModal = document.getElementById('login-form-modal');
+    loginErrorModal = document.getElementById('login-error-modal');
+    
+    // Check authentication
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    
+    if (isLoggedIn === 'true') {
+        await showApp();
+    } else {
+        showLoginModal();
+    }
+    
+    // Setup event listeners
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    if (backToDashboard) {
+        backToDashboard.addEventListener('click', showDashboard);
+    }
+    
+    if (globalSearch) {
+        globalSearch.addEventListener('input', handleSearch);
+    }
+    
+    if (loginFormModal) {
+        loginFormModal.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLoginModal();
+            return false;
+        });
+    }
+}
 
 // ============================================
 // AUTHENTICATION FUNCTIONS
@@ -142,25 +182,95 @@ function showLoginModal() {
 // APP DISPLAY FUNCTIONS
 // ============================================
 async function showApp() {
+    // Show loading screen
     const loadingScreen = document.getElementById('loading-screen');
-if (loadingScreen) loadingScreen.classList.remove('hidden');
-    // 1. Сначала загружаем данные из Google Таблицы
+    if (loadingScreen) {
+        loadingScreen.classList.remove('hidden');
+    }
+    
+    // 1. Load data from Google Sheets
     await loadDatabase();
     
+    // 2. Hide login modal
     if (loginModal) {
-…    if (totalSuppliersEl) {
+        loginModal.classList.add('hidden');
+    }
+    
+    // 3. Show app screen
+    if (appScreen) {
+        appScreen.classList.remove('hidden');
+    }
+    
+    // 4. Get unique categories from loaded database
+    const categories = getUniqueCategories();
+    
+    // 5. Update stats
+    if (totalSuppliersEl) {
         totalSuppliersEl.textContent = database.length;
     }
     if (totalCategoriesEl) {
         totalCategoriesEl.textContent = categories.length;
     }
-
-    // Render categories
+    
+    // 6. Render categories
     renderCategories();
-        if (loadingScreen) {
-    setTimeout(() => loadingScreen.classList.add('hidden'), 500);
+    
+    // 7. Hide loading screen with delay for smooth transition
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 300);
+    }
 }
+
+function showDashboard() {
+    currentCategory = null;
+    
+    if (dashboardView) {
+        dashboardView.classList.remove('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.add('hidden');
+    }
+    if (globalSearch) {
+        globalSearch.value = '';
+    }
+    
+    // Update stats
+    const categories = getUniqueCategories();
+    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = database.length;
+    }
+    if (totalCategoriesEl) {
+        totalCategoriesEl.textContent = categories.length;
+    }
+    
+    renderCategories();
 }
+
+function showCategory(categoryName) {
+    currentCategory = categoryName;
+    
+    if (currentCategoryTitle) {
+        currentCategoryTitle.textContent = categoryName;
+    }
+    
+    const suppliers = getSuppliersByCategory(categoryName);
+    
+    if (currentCategoryCount) {
+        currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    }
+    
+    if (dashboardView) {
+        dashboardView.classList.add('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.remove('hidden');
+    }
+    
+    renderSuppliers(suppliers);
+}
+
 // ============================================
 // DATA FUNCTIONS
 // ============================================
@@ -175,7 +285,7 @@ function getSuppliersByCategory(category) {
 
 function searchSuppliers(query) {
     const lowerQuery = query.toLowerCase();
-    return database.filter(item => 
+    return database.filter(item =>
         item.name.toLowerCase().includes(lowerQuery) ||
         item.equipment.toLowerCase().includes(lowerQuery) ||
         (item.contact && item.contact.toLowerCase().includes(lowerQuery)) ||
@@ -228,7 +338,7 @@ function renderSuppliers(suppliers) {
         `;
         return;
     }
-
+    
     suppliers.forEach((supplier, index) => {
         const item = document.createElement('div');
         item.className = 'supplier-item';
@@ -381,7 +491,7 @@ function handleSearch(e) {
         }
         return;
     }
-
+    
     const filtered = searchSuppliers(query);
     
     if (currentCategory) {
