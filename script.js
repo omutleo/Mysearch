@@ -191,20 +191,21 @@ function searchSuppliers(query) {
     if (!lowerQuery) return [];
     
     return database.filter(item => {
-        // Безопасно получаем значения, триммируем и приводим к нижнему регистру
-        const fields = [
-            item.name,
-            item.equipment, 
-            item.contact,
-            item.email,
-            item.comments  // Теперь и comments ищется!
-        ].map(val => (val || '').toString().toLowerCase().trim());
+        // Безопасно получаем значения (даже если пустые или undefined)
+        const name = (item.name || '').toString().toLowerCase().trim();
+        const equipment = (item.equipment || '').toString().toLowerCase().trim();
+        const contact = (item.contact || '').toString().toLowerCase().trim();
+        const email = (item.email || '').toString().toLowerCase().trim();
+        const comments = (item.comments || '').toString().toLowerCase().trim();
         
-        // Проверяем, содержится ли запрос в любом из полей
-        return fields.some(field => field.includes(lowerQuery));
+        // Ищем во ВСЕХ полях без проверок на truthy
+        return name.includes(lowerQuery) ||
+               equipment.includes(lowerQuery) ||
+               contact.includes(lowerQuery) ||
+               email.includes(lowerQuery) ||
+               comments.includes(lowerQuery);
     });
 }
-
 // ============================================
 // RENDER
 // ============================================
