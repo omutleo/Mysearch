@@ -18,11 +18,11 @@
             <form id="login-form-modal" class="login-form">
                 <div class="form-group">
                     <label for="username-modal">Логин</label>
-                    <input type="text" id="username-modal" name="username" required autocomplete="username">
+                    <input type="text" id="username-modal" name="username" required>
                 </div>
                 <div class="form-group">
                     <label for="password-modal">Пароль</label>
-                    <input type="password" id="password-modal" name="password" required autocomplete="current-password">
+                    <input type="password" id="password-modal" name="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-full">Войти</button>
                 <p id="login-error-modal" class="error-message">Неверный логин или пароль</p>
@@ -33,10 +33,9 @@
 
     <!-- Main App Screen -->
     <div id="app-screen" class="hidden">
-        <!-- Header -->
         <header class="main-header">
             <div class="header-content">
-                <button id="back-to-dashboard" class="btn-back hidden" title="Назад">
+                <button id="back-to-dashboard" class="btn-back hidden">
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <div class="brand">
@@ -44,7 +43,7 @@
                 </div>
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="global-search" class="search-input" placeholder="Поиск поставщиков, оборудования, контактов...">
+                    <input type="text" id="global-search" class="search-input" placeholder="Поиск поставщиков...">
                 </div>
                 <button id="refresh-data-btn" class="btn btn-secondary" title="Обновить данные">
                     <i class="fas fa-sync-alt"></i>
@@ -53,12 +52,9 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="container">
-            <!-- Dashboard View -->
             <div id="dashboard-view">
                 <h1 class="page-title">База поставщиков</h1>
-                
                 <div class="stats-bar">
                     <div class="stat-item">
                         <span id="total-suppliers" class="stat-number">0</span>
@@ -69,32 +65,25 @@
                         <span class="stat-label">Категорий</span>
                     </div>
                 </div>
-
                 <h2 class="section-title">Категории оборудования</h2>
-                <div id="categories-container" class="categories-grid">
-                    <!-- Категории будут добавлены через JavaScript -->
-                </div>
+                <div id="categories-container" class="categories-grid"></div>
             </div>
 
-            <!-- Category View -->
             <div id="category-view" class="hidden">
                 <div class="category-header">
                     <h1 id="current-category-title" class="category-title-large">Название категории</h1>
                     <span id="current-category-count" class="category-count">0 поставщиков</span>
                 </div>
-                <div id="suppliers-container" class="suppliers-list">
-                    <!-- Поставщики будут добавлены через JavaScript -->
-                </div>
+                <div id="suppliers-container" class="suppliers-list"></div>
             </div>
         </main>
 
-        <!-- Footer -->
         <footer class="main-footer">
             <p>© 2024 HTec. Все права защищены.</p>
         </footer>
     </div>
 
-    <!-- Scripts - порядок важен! -->
+    <!-- ВАЖНО: data.js ДОЛЖЕН быть ПЕРЕД script.js! -->
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
