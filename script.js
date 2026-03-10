@@ -1,5 +1,3 @@
-// script.js - Основной функционал с Google Sheets
-// ============================================
 // STATE & DOM ELEMENTS
 // ============================================
 let currentCategory = null;
@@ -60,7 +58,6 @@ async function fetchFromGoogleSheets() {
     showLoading(true);
     
     try {
-        // Проверка конфигурации
         if (!CONFIG.GOOGLE_SHEET_CSV || CONFIG.GOOGLE_SHEET_CSV.includes('ВСТАВЬТЕ')) {
             throw new Error('Не настроена ссылка на Google Таблицу в config.js');
         }
@@ -105,7 +102,6 @@ async function saveToGoogleSheets(supplierData) {
             })
         });
         
-        // При no-cors мы не можем прочитать ответ, но если нет ошибки - считаем успешным
         return true;
         
     } catch (error) {
@@ -117,7 +113,6 @@ async function saveToGoogleSheets(supplierData) {
 function parseCSV(csvText) {
     const lines = csvText.split('\n').filter(line => line.trim() !== '');
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    
     const result = [];
     
     for (let i = 1; i < lines.length; i++) {
@@ -212,7 +207,6 @@ function initAppPage() {
         showLoginModal();
     }
     
-    // Event listeners
     if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
     if (backToDashboard) backToDashboard.addEventListener('click', showDashboard);
     if (globalSearch) globalSearch.addEventListener('input', handleSearch);
@@ -385,7 +379,6 @@ async function handleAddSupplier(e) {
         return;
     }
     
-    // Блокируем кнопку сохранения
     if (saveSupplierBtn) {
         saveSupplierBtn.disabled = true;
         saveSupplierBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
@@ -406,7 +399,6 @@ async function handleAddSupplier(e) {
             showNotification('Поставщик успешно добавлен! Обновите данные для отображения.', 'success');
             closeAddSupplierModal();
             
-            // Добавляем локально для немедленного отображения
             allSuppliers.push(newSupplier);
             
             if (currentCategory) {
@@ -422,7 +414,6 @@ async function handleAddSupplier(e) {
         console.error('Ошибка:', error);
         showNotification('Ошибка сохранения: ' + error.message, 'error');
     } finally {
-        // Разблокируем кнопку
         if (saveSupplierBtn) {
             saveSupplierBtn.disabled = false;
             saveSupplierBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить';
@@ -444,7 +435,7 @@ function getSuppliersByCategory(category) {
 
 function searchSuppliers(query) {
     const lowerQuery = query.toLowerCase();
-    return allSuppliers.filter(item => 
+    return allSuppliers.filter(item =>
         (item.name && item.name.toLowerCase().includes(lowerQuery)) ||
         (item.equipment && item.equipment.toLowerCase().includes(lowerQuery)) ||
         (item.contact && item.contact.toLowerCase().includes(lowerQuery)) ||
@@ -460,7 +451,6 @@ function renderCategories() {
     if (!categoriesContainer) return;
     
     categoriesContainer.innerHTML = '';
-    
     const categories = getUniqueCategories();
     
     categories.forEach(category => {
@@ -497,7 +487,7 @@ function renderSuppliers(suppliers) {
         `;
         return;
     }
-
+    
     suppliers.forEach((supplier, index) => {
         const item = document.createElement('div');
         item.className = 'supplier-item';
@@ -541,7 +531,7 @@ function renderSuppliers(suppliers) {
             `;
         }
         
-        const copyBtn = supplier.email ? 
+        const copyBtn = supplier.email ?
             `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email">
                 <i class="fas fa-copy"></i> Копировать
             </button>` : '';
@@ -666,7 +656,7 @@ function handleSearch(e) {
         }
         return;
     }
-
+    
     const filtered = searchSuppliers(query);
     
     if (currentCategory) {
