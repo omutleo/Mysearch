@@ -6,6 +6,9 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTgA5Y46KknkOfR
 let database = [];
 let dataLoaded = false;
 
+// Функция очистки значений от пробелов и лишних символов
+const clean = (val) => (val || '').toString().trim().replace(/\s+/g, ' ');
+
 // Парсер одной строки CSV
 function parseCSVLine(line) {
     const result = [];
@@ -30,7 +33,8 @@ function parseCSVLine(line) {
             current += char;
         }
     }
-    return result.map(val => val.trim().replace(/(^"|"$)/g, ''));
+    result.push(current);
+    return result.map(val => clean(val));
 }
 
 // Парсер CSV текста
@@ -50,16 +54,14 @@ function parseCSV(text) {
             obj[header] = values[index] || '';
         });
         
-       // Функция очистки: триммирует и убирает лишние пробелы
-const clean = (val) => (val || '').toString().trim().replace(/\s+/g, ' ');
-
-const supplier = {
-    name: clean(obj.name || obj.название || obj.поставщик),
-    equipment: clean(obj.equipment || obj.категория || obj.оборудование),
-    contact: clean(obj.contact || obj.контакт || obj.контактное_лицо),
-    email: clean(obj.email || obj.почта || obj.e_mail),
-    comments: clean(obj.comments || obj.комментарии || obj.примечание)
-};
+        // Создаём объект поставщика с очисткой всех полей
+        const supplier = {
+            name: clean(obj.name || obj.название || obj.поставщик),
+            equipment: clean(obj.equipment || obj.категория || obj.оборудование),
+            contact: clean(obj.contact || obj.контакт || obj.контактное_лицо),
+            email: clean(obj.email || obj.почта || obj.e_mail),
+            comments: clean(obj.comments || obj.комментарии || obj.примечание)
+        };
         
         if (supplier.name || supplier.equipment) {
             result.push(supplier);
@@ -73,7 +75,7 @@ async function loadDatabase() {
     try {
         console.log('📥 Загрузка данных...');
         
-        // Добавляем timestamp чтобы обойти кэш
+        // Добавляем timestamp чтобы обойти кэш браузера
         const url = CSV_URL + '&t=' + Date.now();
         
         const response = await fetch(url, { cache: 'no-store' });
@@ -87,6 +89,12 @@ async function loadDatabase() {
         dataLoaded = true;
         
         console.log('✅ Загружено ' + database.length + ' поставщиков');
+        
+        // Проверка: выводим первый элемент для отладки
+        if (database.length > 0) {
+            console.log('📋 Пример данных:', database[0]);
+        }
+        
         return database;
         
     } catch (error) {
@@ -97,7 +105,7 @@ async function loadDatabase() {
     }
 }
 
-// Иконки категорий
+// Иконки категорий (БЕЗ пробелов в ключах!)
 const categoryIcons = {
     'Техника автоматизации': 'fa-cogs',
     'Оснащение лабораторий': 'fa-flask',
