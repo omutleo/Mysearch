@@ -1,105 +1,79 @@
-// data.js - Загрузка данных из Google Sheets (CSV)
+// data.js - База данных поставщиков
 // ============================================
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTgA5Y46KknkOfRv7Dj-1mlnABECey_WYuVZSq6mrstoYnY-WrnH1KZVKafIuZwuXiY00HOt9Uzu91X/pub?gid=11256287&single=true&output=csv';
-
-let database = []; // Глобальный массив с данными
-let dataLoaded = false; // Флаг загрузки
-
-// Парсер CSV с поддержкой кавычек и запятых внутри полей
-function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    if (lines.length < 2) return [];
-    
-    const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-    const result = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        const values = parseCSVLine(lines[i]);
-        const obj = {};
-        
-        headers.forEach((header, index) => {
-            obj[header] = values[index] ? values[index].trim().replace(/^"|"$/g, '') : '';
-        });
-        
-        if (obj.name || obj.equipment) {
-            result.push({
-                name: obj.name || '',
-                equipment: obj.equipment || '',
-                contact: obj.contact || '',
-                email: obj.email || '',
-                comments: obj.comments || ''
-            });
-        }
+const database = [
+    {
+        name: "Да, поставим",
+        equipment: "Техника автоматизации",
+        contact: "Мария ИВЬЕВА",
+        email: "sale9@da-postavim.ru",
+        comments: "Endress+Hauser, PARKER, Phoenix contact, Rockwell, Siemens, ABB, Schneider Electric, Allen-Bradley, Omron, Tetra Pak, Alfa Laval, Wago, Fanuc, Sick, Pepper+Fuchs, Norgen, IFM, Balluff, FESTO, Rittal, SEW-Eurodrive, Danfoss, B&R, Emerson, PILZ"
+    },
+    {
+        name: "Вент Эл",
+        equipment: "Техника автоматизации",
+        contact: "Александр Васьков",
+        email: "415@vent-el.ru",
+        comments: "ФМР, ФРНК, ППУ, ФПП, Кондиционеры, сплит-системы - Haier, Lessar, Quattroclima, Tosot, Fujitsu, BALLU, Electrolux"
+    },
+    {
+        name: "ООО Глобал автоматикс",
+        equipment: "Техника автоматизации",
+        contact: "Евгения Коваленко",
+        email: "e.kovalenko@simatix.ru",
+        comments: "Siemens, Phoenix contact, SICK, Schneider Electric, АВВ, Pepperl+fuchs, Rittal, WAGO, Beckhoff, SEW Eurodrive"
+    },
+    {
+        name: "Корвет Нева",
+        equipment: "Оснащение лабораторий",
+        contact: "Никита Игоревич Зезуль",
+        email: "nikita.korvet-neva@mail.ru",
+        comments: "оснащением лабораторий различного профиля"
+    },
+    {
+        name: "Миллаб",
+        equipment: "Оснащение лабораторий",
+        contact: "Максим Стрелков",
+        email: "mas@millab.ru",
+        comments: "Наша компания является авторизированным дистрибьютором лабораторного, аналитического и промышленного оборудования"
+    },
+    {
+        name: "Химмед",
+        equipment: "Хим реактивы",
+        contact: "Кондратьев Алексей",
+        email: "chimmed@mail.ru",
+        comments: "Хим реактивы, Смесь Pesticide Mix of 12 comp."
+    },
+    {
+        name: "Реарус",
+        equipment: "Хим реактивы",
+        contact: "Менеджер продаж",
+        email: "info@rearus.ru",
+        comments: "Химические реактивы и растворители как отечественных, так и иностранных производителей"
+    },
+    {
+        name: "О-рингс",
+        equipment: "Уплотнения",
+        contact: "Максим Кравченко",
+        email: "sales@o-ring.su",
+        comments: "Уплотнение, кольцо, EPDM, o-ring"
+    },
+    {
+        name: "Амертенд",
+        equipment: "Масло",
+        contact: "Менеджер продаж",
+        email: "info@amertend.ru",
+        comments: "Масло Klüberoil, масла"
+    },
+    {
+        name: "Deomera",
+        equipment: "Оборудование",
+        contact: "Дмитрий Михайлов",
+        email: "info@deomera.ru",
+        comments: "тестер сопротивления, мультиметр, манометр, измерительные приборы"
     }
-    
-    return result;
-}
+];
 
-// Парсер одной строки CSV с корректной обработкой кавычек
-function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = line[i + 1];
-        
-        if (char === '"') {
-            if (inQuotes && nextChar === '"') {
-                current += '"';
-                i++;
-            } else {
-                inQuotes = !inQuotes;
-            }
-        } else if (char === ',' && !inQuotes) {
-            result.push(current);
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    result.push(current);
-    
-    return result;
-}
-
-// Основная функция загрузки данных
-async function loadDatabase() {
-    try {
-        console.log('📥 Загрузка данных из Google Sheets...');
-        const response = await fetch(CSV_URL, { 
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const csvText = await response.text();
-        database = parseCSV(csvText);
-        dataLoaded = true;
-        
-        console.log(`✅ Загружено ${database.length} поставщиков`);
-        return database;
-        
-    } catch (error) {
-        console.error('❌ Ошибка загрузки данных:', error);
-        database = [];
-        dataLoaded = true;
-        return [];
-    }
-}
-
-// Иконки категорий
 const categoryIcons = {
     "Техника автоматизации": "fa-cogs",
     "Оснащение лабораторий": "fa-flask",
@@ -109,3 +83,12 @@ const categoryIcons = {
     "Масло": "fa-oil-can",
     "Уплотнения": "fa-ring"
 };
+
+// Флаг загрузки (для совместимости)
+let dataLoaded = true;
+
+// Функция-заглушка для совместимости с script.js
+async function loadDatabase() {
+    console.log(`✅ Загружено ${database.length} поставщиков из локальной базы`);
+    return database;
+}
