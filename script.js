@@ -1,9 +1,18 @@
 // script.js - Основной функционал приложения
 // ============================================
+// КОНФИГУРАЦИЯ
+// ============================================
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTgA5Y46KknkOfRv7Dj-1mlnABECey_WYuVZSq6mrstoYnY-WrnH1KZVKafIuZwuXiY00HOt9Uzu91X/pub?gid=11256287&single=true&output=csv';
 
-// Глобальные переменные
+// ============================================
+// STATE & DOM ELEMENTS
+// ============================================
 let currentCategory = null;
-let allSuppliers = [];
+let allSuppliers = []; // Загружается из CSV
+let database = []; // Ссылка на загруженные данные
+let dataLoaded = false;
+
+// DOM Elements
 let loginScreen = null;
 let loginForm = null;
 let loginError = null;
@@ -23,28 +32,147 @@ let loginModal = null;
 let loginFormModal = null;
 let loginErrorModal = null;
 
+// Иконки категорий
+const categoryIcons = {
+    "Техника автоматизации": "fa-cogs",
+    "Оснащение лабораторий": "fa-flask",
+    "Хим реактивы": "fa-vial",
+    "Запчасти": "fa-wrench",
+    "Оборудование": "fa-industry",
+    "Масло": "fa-oil-can",
+    "Уплотнения": "fa-ring"
+};
+
+// ============================================
+// CSV PARSER FUNCTIONS
+// ============================================
+
+// Парсер одной строки CSV с корректной обработкой кавычек и запятых внутри полей
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+                current += '"'; // Экранированная кавычка ""
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            result.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    result.push(current);
+    
+    return result.map(val => val.trim().replace(/^"|"$/g, ''));
+}
+
+// Парсер всего CSV текста в массив объектов
+function parseCSV(text) {
+    const lines = text.trim().split('\n').filter(line => line.trim());
+    if (lines.length < 2) return [];
+    
+    // Первая строка - заголовки
+    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+    const result = [];
+    
+    // Обрабатываем строки данных
+    for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        if (values.length < 2) continue;
+        
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = values[index] || '';
+        });
+        
+        // Приводим к нужной структуре (поддерживаем разные варианты названий колонок)
+        const supplier = {
+            name: obj.name || obj.название || obj.поставщик || '',
+            equipment: obj.equipment || obj.категория || obj.оборудование || '',
+            contact: obj.contact || obj.контакт || obj.контактное_лицо || '',
+            email: obj.email || obj.почта || obj.e_mail || '',
+            comments: obj.comments || obj.комментарии || obj.примечание || ''
+        };
+        
+        // Добавляем только если есть имя или оборудование
+        if (supplier.name || supplier.equipment) {
+            result.push(supplier);
+        }
+    }
+    
+    return result;
+}
+
+// Основная функция загрузки данных из Google Sheets
+async function loadDatabase() {
+    try {
+        console.log('📥 Загрузка данных из Google Sheets...');
+        
+        const response = await fetch(CSV_URL, { 
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        database = parseCSV(csvText);
+        allSuppliers = database;
+        dataLoaded = true;
+        
+        console.log(`✅ Загружено ${database.length} поставщиков`);
+        return database;
+        
+    } catch (error) {
+        console.error('❌ Ошибка загрузки данных:', error);
+        // Fallback: пустой массив, чтобы сайт не сломался
+        database = [];
+        allSuppliers = [];
+        dataLoaded = true;
+        showNotification('⚠️ Не удалось загрузить данные. Проверьте подключение к интернету.', 'error');
+        return [];
+    }
+}
+
 // ============================================
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async function() {
-    // Загружаем данные из CSV
+    // Сначала загружаем данные из CSV
     await loadDatabase();
-    allSuppliers = database;
     
-    // Определяем страницу
+    // Определяем страницу и инициализируем
     loginScreen = document.getElementById('login-screen');
     appScreen = document.getElementById('app-screen');
     loginModal = document.getElementById('login-modal');
     
     if (loginScreen) {
+        // Мы на login.html
         initLoginPage();
     } else if (appScreen) {
+        // Мы на index.html
         initAppPage();
     }
 });
 
 // ============================================
-// LOGIN PAGE
+// LOGIN PAGE INITIALIZATION
 // ============================================
 function initLoginPage() {
     loginForm = document.getElementById('login-form');
@@ -53,13 +181,77 @@ function initLoginPage() {
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             handleLogin();
             return false;
         });
     }
+    
+    // Проверяем, если уже авторизован
     checkAuth();
 }
 
+// ============================================
+// APP PAGE INITIALIZATION
+// ============================================
+function initAppPage() {
+    // Получаем DOM элементы
+    logoutBtn = document.getElementById('logout-btn');
+    globalSearch = document.getElementById('global-search');
+    dashboardView = document.getElementById('dashboard-view');
+    categoryView = document.getElementById('category-view');
+    categoriesContainer = document.getElementById('categories-container');
+    suppliersContainer = document.getElementById('suppliers-container');
+    currentCategoryTitle = document.getElementById('current-category-title');
+    currentCategoryCount = document.getElementById('current-category-count');
+    backToDashboard = document.getElementById('back-to-dashboard');
+    totalSuppliersEl = document.getElementById('total-suppliers');
+    totalCategoriesEl = document.getElementById('total-categories');
+    loginModal = document.getElementById('login-modal');
+    loginFormModal = document.getElementById('login-form-modal');
+    loginErrorModal = document.getElementById('login-error-modal');
+    
+    // Проверяем авторизацию
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    
+    if (isLoggedIn === 'true') {
+        showApp();
+    } else {
+        showLoginModal();
+    }
+    
+    // Настраиваем обработчики событий
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    if (backToDashboard) {
+        backToDashboard.addEventListener('click', showDashboard);
+    }
+    
+    if (globalSearch) {
+        globalSearch.addEventListener('input', handleSearch);
+    }
+    
+    if (loginFormModal) {
+        loginFormModal.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLoginModal();
+            return false;
+        });
+    }
+    
+    // Кнопка обновления данных (если есть)
+    const refreshBtn = document.getElementById('refresh-data-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', handleRefreshData);
+    }
+}
+
+// ============================================
+// AUTHENTICATION FUNCTIONS
+// ============================================
 function checkAuth() {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     if (isLoggedIn === 'true' && loginScreen && appScreen) {
@@ -77,51 +269,10 @@ function handleLogin() {
     } else {
         if (loginError) {
             loginError.style.display = 'block';
-            setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 3000);
         }
-    }
-}
-
-// ============================================
-// APP PAGE
-// ============================================
-function initAppPage() {
-    logoutBtn = document.getElementById('logout-btn');
-    globalSearch = document.getElementById('global-search');
-    dashboardView = document.getElementById('dashboard-view');
-    categoryView = document.getElementById('category-view');
-    categoriesContainer = document.getElementById('categories-container');
-    suppliersContainer = document.getElementById('suppliers-container');
-    currentCategoryTitle = document.getElementById('current-category-title');
-    currentCategoryCount = document.getElementById('current-category-count');
-    backToDashboard = document.getElementById('back-to-dashboard');
-    totalSuppliersEl = document.getElementById('total-suppliers');
-    totalCategoriesEl = document.getElementById('total-categories');
-    loginModal = document.getElementById('login-modal');
-    loginFormModal = document.getElementById('login-form-modal');
-    loginErrorModal = document.getElementById('login-error-modal');
-    
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
-        showApp();
-    } else {
-        showLoginModal();
-    }
-    
-    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-    if (backToDashboard) backToDashboard.addEventListener('click', showDashboard);
-    if (globalSearch) globalSearch.addEventListener('input', handleSearch);
-    if (loginFormModal) {
-        loginFormModal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handleLoginModal();
-            return false;
-        });
-    }
-    
-    const refreshBtn = document.getElementById('refresh-data-btn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', handleRefreshData);
     }
 }
 
@@ -131,12 +282,16 @@ function handleLoginModal() {
     
     if (username === 'admin' && password === '20hyptec26') {
         sessionStorage.setItem('isLoggedIn', 'true');
-        if (loginModal) loginModal.classList.add('hidden');
+        if (loginModal) {
+            loginModal.classList.add('hidden');
+        }
         showApp();
     } else {
         if (loginErrorModal) {
             loginErrorModal.style.display = 'block';
-            setTimeout(() => { loginErrorModal.style.display = 'none'; }, 3000);
+            setTimeout(() => {
+                loginErrorModal.style.display = 'none';
+            }, 3000);
         }
     }
 }
@@ -149,41 +304,82 @@ function handleLogout() {
 function showLoginModal() {
     if (loginModal) {
         loginModal.classList.remove('hidden');
-        if (appScreen) appScreen.classList.add('hidden');
+    }
+    if (appScreen) {
+        appScreen.classList.add('hidden');
     }
 }
 
+// ============================================
+// APP DISPLAY FUNCTIONS
+// ============================================
 function showApp() {
-    if (loginModal) loginModal.classList.add('hidden');
-    if (appScreen) appScreen.classList.remove('hidden');
+    if (loginModal) {
+        loginModal.classList.add('hidden');
+    }
+    if (appScreen) {
+        appScreen.classList.remove('hidden');
+    }
     
+    // Получаем уникальные категории
     const categories = getUniqueCategories();
-    if (totalSuppliersEl) totalSuppliersEl.textContent = allSuppliers.length;
-    if (totalCategoriesEl) totalCategoriesEl.textContent = categories.length;
+    
+    // Обновляем статистику
+    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = allSuppliers.length;
+    }
+    if (totalCategoriesEl) {
+        totalCategoriesEl.textContent = categories.length;
+    }
+    
+    // Рендерим категории
     renderCategories();
 }
 
 function showDashboard() {
     currentCategory = null;
-    if (dashboardView) dashboardView.classList.remove('hidden');
-    if (categoryView) categoryView.classList.add('hidden');
-    if (globalSearch) globalSearch.value = '';
     
+    if (dashboardView) {
+        dashboardView.classList.remove('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.add('hidden');
+    }
+    if (globalSearch) {
+        globalSearch.value = '';
+    }
+    
+    // Обновляем статистику
     const categories = getUniqueCategories();
-    if (totalSuppliersEl) totalSuppliersEl.textContent = allSuppliers.length;
-    if (totalCategoriesEl) totalCategoriesEl.textContent = categories.length;
+    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = allSuppliers.length;
+    }
+    if (totalCategoriesEl) {
+        totalCategoriesEl.textContent = categories.length;
+    }
+    
     renderCategories();
 }
 
 function showCategory(categoryName) {
     currentCategory = categoryName;
-    if (currentCategoryTitle) currentCategoryTitle.textContent = categoryName;
+    
+    if (currentCategoryTitle) {
+        currentCategoryTitle.textContent = categoryName;
+    }
     
     const suppliers = getSuppliersByCategory(categoryName);
-    if (currentCategoryCount) currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    if (currentCategoryCount) {
+        currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    }
     
-    if (dashboardView) dashboardView.classList.add('hidden');
-    if (categoryView) categoryView.classList.remove('hidden');
+    if (dashboardView) {
+        dashboardView.classList.add('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.remove('hidden');
+    }
+    
     renderSuppliers(suppliers);
 }
 
@@ -214,13 +410,14 @@ function searchSuppliers(query) {
 }
 
 // ============================================
-// RENDERING
+// RENDERING FUNCTIONS
 // ============================================
 function renderCategories() {
     if (!categoriesContainer) return;
     categoriesContainer.innerHTML = '';
     
     const categories = getUniqueCategories();
+    
     if (categories.length === 0) {
         categoriesContainer.innerHTML = '<div class="no-results"><p>Категории не найдены</p></div>';
         return;
@@ -238,7 +435,9 @@ function renderCategories() {
         card.addEventListener('click', () => showCategory(category));
         card.setAttribute('tabindex', '0');
         card.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') showCategory(category);
+            if (e.key === 'Enter') {
+                showCategory(category);
+            }
         });
         categoriesContainer.appendChild(card);
     });
@@ -249,7 +448,12 @@ function renderSuppliers(suppliers) {
     suppliersContainer.innerHTML = '';
     
     if (!suppliers || suppliers.length === 0) {
-        suppliersContainer.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>Поставщики не найдены</p></div>';
+        suppliersContainer.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <p>Поставщики не найдены</p>
+            </div>
+        `;
         return;
     }
     
@@ -259,39 +463,79 @@ function renderSuppliers(suppliers) {
         item.style.animationDelay = `${index * 0.05}s`;
         
         let detailsHTML = '';
+        
         if (supplier.contact) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-user detail-icon"></i><div><div class="detail-label">Контактное лицо</div><div class="detail-text">${supplier.contact}</div></div></div>`;
+            detailsHTML += `
+                <div class="detail-item">
+                    <i class="fas fa-user detail-icon"></i>
+                    <div>
+                        <div class="detail-label">Контактное лицо</div>
+                        <div class="detail-text">${supplier.contact}</div>
+                    </div>
+                </div>
+            `;
         }
+        
         if (supplier.email) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-envelope detail-icon"></i><div><div class="detail-label">Почта</div><div class="detail-text">${supplier.email}</div></div></div>`;
+            detailsHTML += `
+                <div class="detail-item">
+                    <i class="fas fa-envelope detail-icon"></i>
+                    <div>
+                        <div class="detail-label">Почта</div>
+                        <div class="detail-text">${supplier.email}</div>
+                    </div>
+                </div>
+            `;
         }
+        
         if (supplier.equipment) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-cogs detail-icon"></i><div><div class="detail-label">Оборудование</div><div class="detail-text">${supplier.equipment}</div></div></div>`;
+            detailsHTML += `
+                <div class="detail-item">
+                    <i class="fas fa-cogs detail-icon"></i>
+                    <div>
+                        <div class="detail-label">Оборудование</div>
+                        <div class="detail-text">${supplier.equipment}</div>
+                    </div>
+                </div>
+            `;
         }
         
+        // Кнопка копирования email (если email есть)
         const copyBtn = supplier.email ? 
-            `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email"><i class="fas fa-copy"></i> Копировать</button>` : '';
+            `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email">
+                <i class="fas fa-copy"></i> Копировать
+            </button>` : '';
         
-        item.innerHTML = `<div class="supplier-name">${supplier.name}</div><div class="supplier-details">${detailsHTML}</div>${copyBtn}`;
+        item.innerHTML = `
+            <div class="supplier-name">${supplier.name}</div>
+            <div class="supplier-details">
+                ${detailsHTML}
+            </div>
+            ${copyBtn}
+        `;
+        
         suppliersContainer.appendChild(item);
     });
     
+    // Добавляем обработчики событий на кнопки копирования
     document.querySelectorAll('.copy-email-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            copyToClipboard(this.getAttribute('data-email'), this);
+            const email = this.getAttribute('data-email');
+            copyToClipboard(email, this);
         });
     });
 }
 
 // ============================================
-// COPY TO CLIPBOARD
+// COPY TO CLIPBOARD FUNCTION
 // ============================================
 function copyToClipboard(text, button) {
+    // Используем Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
             showCopyNotification(button, 'Email скопирован!');
-        }).catch(() => {
+        }).catch(err => {
             fallbackCopyToClipboard(text, button);
         });
     } else {
@@ -304,39 +548,62 @@ function fallbackCopyToClipboard(text, button) {
     textArea.value = text;
     textArea.style.position = 'fixed';
     textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
     document.body.appendChild(textArea);
+    textArea.focus();
     textArea.select();
+    
     try {
         document.execCommand('copy');
         showCopyNotification(button, 'Email скопирован!');
     } catch (err) {
         showCopyNotification(button, 'Ошибка копирования', true);
     }
+    
     document.body.removeChild(textArea);
 }
 
 function showCopyNotification(button, message, isError = false) {
+    // Создаем уведомление
     const notification = document.createElement('div');
     notification.className = 'copy-notification' + (isError ? ' error' : '');
     notification.textContent = message;
+    
+    // Позиционируем рядом с кнопкой
     const rect = button.getBoundingClientRect();
-    notification.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.bottom + 10}px;z-index:10000;`;
+    notification.style.position = 'fixed';
+    notification.style.left = rect.left + 'px';
+    notification.style.top = (rect.bottom + 10) + 'px';
+    notification.style.zIndex = '10000';
+    
     document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Анимация появления
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Удаляем через 2 секунды
     setTimeout(() => {
         notification.classList.remove('show');
-        setTimeout(() => { if (document.body.contains(notification)) document.body.removeChild(notification); }, 300);
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
     }, 2000);
 }
 
 // ============================================
-// SEARCH
+// SEARCH FUNCTION
 // ============================================
 function handleSearch(e) {
     const query = e.target.value.toLowerCase().trim();
+    
     if (query.length === 0) {
         if (currentCategory) {
-            renderSuppliers(getSuppliersByCategory(currentCategory));
+            const suppliers = getSuppliersByCategory(currentCategory);
+            renderSuppliers(suppliers);
         } else {
             renderCategories();
         }
@@ -344,19 +611,31 @@ function handleSearch(e) {
     }
     
     const filtered = searchSuppliers(query);
+    
     if (currentCategory) {
-        renderSuppliers(filtered.filter(item => item.equipment === currentCategory));
+        // Поиск внутри текущей категории
+        const categoryFiltered = filtered.filter(item => item.equipment === currentCategory);
+        renderSuppliers(categoryFiltered);
     } else {
-        if (currentCategoryTitle) currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
-        if (currentCategoryCount) currentCategoryCount.textContent = `${filtered.length} найдено`;
-        if (dashboardView) dashboardView.classList.add('hidden');
-        if (categoryView) categoryView.classList.remove('hidden');
+        // Глобальный поиск - показываем результаты в view категории
+        if (currentCategoryTitle) {
+            currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
+        }
+        if (currentCategoryCount) {
+            currentCategoryCount.textContent = `${filtered.length} найдено`;
+        }
+        if (dashboardView) {
+            dashboardView.classList.add('hidden');
+        }
+        if (categoryView) {
+            categoryView.classList.remove('hidden');
+        }
         renderSuppliers(filtered);
     }
 }
 
 // ============================================
-// REFRESH DATA
+// REFRESH DATA FUNCTION
 // ============================================
 async function handleRefreshData() {
     const refreshBtn = document.getElementById('refresh-data-btn');
@@ -364,14 +643,16 @@ async function handleRefreshData() {
         refreshBtn.disabled = true;
         refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     }
+    
     try {
         await loadDatabase();
-        allSuppliers = database;
+        
         if (currentCategory) {
             showCategory(currentCategory);
         } else {
             showDashboard();
         }
+        
         showNotification('✅ Данные обновлены!', 'success');
     } catch (error) {
         console.error('Ошибка обновления:', error);
@@ -385,24 +666,48 @@ async function handleRefreshData() {
 }
 
 // ============================================
-// NOTIFICATIONS
+// NOTIFICATION FUNCTION
 // ============================================
 function showNotification(message, type = 'info') {
-    document.querySelectorAll('.app-notification').forEach(n => n.remove());
+    // Удаляем старые уведомления
+    const oldNotifications = document.querySelectorAll('.app-notification');
+    oldNotifications.forEach(n => n.remove());
+    
     const notification = document.createElement('div');
     notification.className = `app-notification ${type}`;
-    notification.style.cssText = `position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:8px;color:white;font-weight:500;z-index:10000;animation:slideIn 0.3s ease;background:${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};box-shadow:0 4px 12px rgba(0,0,0,0.2);`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    `;
     notification.textContent = message;
     document.body.appendChild(notification);
+    
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => { if (document.body.contains(notification)) document.body.removeChild(notification); }, 300);
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
     }, 2500);
 }
 
+// Добавляем анимации в CSS динамически
 if (!document.getElementById('notification-animations')) {
     const style = document.createElement('style');
     style.id = 'notification-animations';
-    style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
+    style.textContent = `
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    `;
     document.head.appendChild(style);
 }
