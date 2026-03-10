@@ -1,0 +1,35 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - База поставщиков HTec</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="login-screen">
+        <div class="login-card">
+            <span class="login-logo">
+                <span class="logo-h">H</span><span class="logo-tec">Tec</span>
+            </span>
+            <h2 class="login-title">Вход в систему</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" placeholder="admin" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="admin" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Войти</button>
+            </form>
+            <p id="login-error" class="error-message">Неверный логин или пароль</p>
+            <p class="login-hint">Логин: <strong>admin</strong> | Пароль: <strong>у администратора</strong></p>
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
