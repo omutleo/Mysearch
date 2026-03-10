@@ -22,6 +22,9 @@
                     <button class="btn btn-primary" id="add-supplier-btn">
                         <i class="fas fa-plus"></i> Добавить
                     </button>
+                    <button class="btn btn-secondary" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Обновить
+                    </button>
                     <button class="btn btn-secondary" id="logout-btn">
                         <i class="fas fa-sign-out-alt"></i> Выход
                     </button>
@@ -30,7 +33,6 @@
         </header>
 
         <main class="container">
-            <!-- DASHBOARD -->
             <div id="dashboard-view">
                 <h1 class="page-title">База поставщиков</h1>
                 <div class="stats-bar">
@@ -42,11 +44,6 @@
                         <span class="stat-number" id="total-categories">0</span>
                         <span class="stat-label">Категорий</span>
                     </div>
-                    <div class="stat-item">
-                        <button class="btn btn-secondary btn-small" id="refresh-btn">
-                            <i class="fas fa-sync-alt"></i> Обновить
-                        </button>
-                    </div>
                 </div>
                 <div id="loading-indicator" class="hidden">
                     <i class="fas fa-spinner fa-spin"></i> Загрузка данных...
@@ -55,7 +52,6 @@
                 <div class="categories-grid" id="categories-container"></div>
             </div>
 
-            <!-- CATEGORY VIEW -->
             <div id="category-view" class="hidden">
                 <div class="category-header">
                     <button class="btn-back" id="back-to-dashboard">
@@ -110,7 +106,7 @@
                 </div>
                 <div class="form-group">
                     <label for="supplier-comments">Комментарии (слова для поиска)</label>
-                    <textarea id="supplier-comments" rows="4" placeholder="Бренды, продукция, ключевые слова для поиска..."></textarea>
+                    <textarea id="supplier-comments" rows="4" placeholder="Бренды, продукция, ключевые слова..."></textarea>
                     <small class="form-hint">Эти данные не отображаются на сайте, но участвуют в поиске</small>
                 </div>
                 <div class="modal-actions">
@@ -127,6 +123,7 @@
     <div id="notification" class="notification hidden"></div>
 
     <script src="config.js"></script>
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
