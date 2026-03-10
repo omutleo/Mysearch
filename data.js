@@ -1,4 +1,4 @@
-// data.js - Загрузка данных из Google Sheets
+// data.js - Загрузка данных из Google Sheets (CSV)
 // ============================================
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTgA5Y46KknkOfRv7Dj-1mlnABECey_WYuVZSq6mrstoYnY-WrnH1KZVKafIuZwuXiY00HOt9Uzu91X/pub?gid=11256287&single=true&output=csv';
@@ -30,11 +30,10 @@ function parseCSVLine(line) {
             current += char;
         }
     }
-    result.push(current);
-    return result.map(val => val.trim().replace(/^"|"$/g, ''));
+    return result.map(val => val.trim().replace(/(^"|"$)/g, ''));
 }
 
-// Парсер CSV
+// Парсер CSV текста
 function parseCSV(text) {
     const lines = text.trim().split('\n').filter(line => line.trim());
     if (lines.length < 2) return [];
@@ -66,26 +65,42 @@ function parseCSV(text) {
     return result;
 }
 
-/ Основная функция загрузки данных
+// Загрузка данных из Google Sheets
 async function loadDatabase() {
     try {
-        console.log('📥 Загрузка данных из Google Sheets...');
+        console.log('📥 Загрузка данных...');
         
-        // ВАЖНО: Не добавляем кастомные заголовки, чтобы не вызывать CORS preflight
-        const response = await fetch(CSV_URL, { 
-            cache: 'no-store'  // Это безопасно и не вызывает preflight
-        });
+        // Добавляем timestamp чтобы обойти кэш
+        const url = CSV_URL + '&t=' + Date.now();
         
-…        return [];
+        const response = await fetch(url, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        
+        const csvText = await response.text();
+        database = parseCSV(csvText);
+        dataLoaded = true;
+        
+        console.log('✅ Загружено ' + database.length + ' поставщиков');
+        return database;
+        
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        database = [];
+        dataLoaded = true;
+        return [];
     }
 }
+
 // Иконки категорий
 const categoryIcons = {
-    "Техника автоматизации": "fa-cogs",
-    "Оснащение лабораторий": "fa-flask",
-    "Хим реактивы": "fa-vial",
-    "Запчасти": "fa-wrench",
-    "Оборудование": "fa-industry",
-    "Масло": "fa-oil-can",
-    "Уплотнения": "fa-ring"
+    'Техника автоматизации': 'fa-cogs',
+    'Оснащение лабораторий': 'fa-flask',
+    'Хим реактивы': 'fa-vial',
+    'Запчасти': 'fa-wrench',
+    'Оборудование': 'fa-industry',
+    'Масло': 'fa-oil-can',
+    'Уплотнения': 'fa-ring'
 };
