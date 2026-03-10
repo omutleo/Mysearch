@@ -21,11 +21,9 @@ function parseCSV(text) {
         const obj = {};
         
         headers.forEach((header, index) => {
-            // Убираем лишние пробелы и кавычки из значений
             obj[header] = values[index] ? values[index].trim().replace(/^"|"$/g, '') : '';
         });
         
-        // Приводим к нужной структуре (как в оригинальной базе)
         if (obj.name || obj.equipment) {
             result.push({
                 name: obj.name || '',
@@ -52,7 +50,7 @@ function parseCSVLine(line) {
         
         if (char === '"') {
             if (inQuotes && nextChar === '"') {
-                current += '"'; // Экранированная кавычка
+                current += '"';
                 i++;
             } else {
                 inQuotes = !inQuotes;
@@ -74,7 +72,12 @@ async function loadDatabase() {
     try {
         console.log('📥 Загрузка данных из Google Sheets...');
         const response = await fetch(CSV_URL, { 
-            cache: 'no-store' // Отключаем кэш для актуальных данных
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
         });
         
         if (!response.ok) {
@@ -90,14 +93,13 @@ async function loadDatabase() {
         
     } catch (error) {
         console.error('❌ Ошибка загрузки данных:', error);
-        // Fallback: пустой массив, чтобы сайт не сломался
         database = [];
         dataLoaded = true;
         return [];
     }
 }
 
-// Иконки категорий (оставляем как есть)
+// Иконки категорий
 const categoryIcons = {
     "Техника автоматизации": "fa-cogs",
     "Оснащение лабораторий": "fa-flask",
