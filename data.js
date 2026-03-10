@@ -1,44 +1,12 @@
-// data.js - Загрузка данных из Google Sheets (CSV)
+// data.js - Загрузка данных из Google Sheets
 // ============================================
 
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTgA5Y46KknkOfRv7Dj-1mlnABECey_WYuVZSq6mrstoYnY-WrnH1KZVKafIuZwuXiY00HOt9Uzu91X/pub?gid=11256287&single=true&output=csv';
 
-let database = []; // Глобальный массив с данными
-let dataLoaded = false; // Флаг загрузки
+let database = [];
+let dataLoaded = false;
 
-// Парсер CSV с поддержкой кавычек и запятых внутри полей
-function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    if (lines.length < 2) return [];
-    
-    const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-    const result = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        const values = parseCSVLine(lines[i]);
-        const obj = {};
-        
-        headers.forEach((header, index) => {
-            obj[header] = values[index] ? values[index].trim().replace(/^"|"$/g, '') : '';
-        });
-        
-        if (obj.name || obj.equipment) {
-            result.push({
-                name: obj.name || '',
-                equipment: obj.equipment || '',
-                contact: obj.contact || '',
-                email: obj.email || '',
-                comments: obj.comments || ''
-            });
-        }
-    }
-    
-    return result;
-}
-
-// Парсер одной строки CSV с корректной обработкой кавычек
+// Парсер одной строки CSV
 function parseCSVLine(line) {
     const result = [];
     let current = '';
@@ -63,14 +31,46 @@ function parseCSVLine(line) {
         }
     }
     result.push(current);
+    return result.map(val => val.trim().replace(/^"|"$/g, ''));
+}
+
+// Парсер CSV
+function parseCSV(text) {
+    const lines = text.trim().split('\n').filter(line => line.trim());
+    if (lines.length < 2) return [];
     
+    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+    const result = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        if (values.length < 2) continue;
+        
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = values[index] || '';
+        });
+        
+        const supplier = {
+            name: obj.name || obj.название || obj.поставщик || '',
+            equipment: obj.equipment || obj.категория || obj.оборудование || '',
+            contact: obj.contact || obj.контакт || obj.контактное_лицо || '',
+            email: obj.email || obj.почта || obj.e_mail || '',
+            comments: obj.comments || obj.комментарии || obj.примечание || ''
+        };
+        
+        if (supplier.name || supplier.equipment) {
+            result.push(supplier);
+        }
+    }
     return result;
 }
 
-// Основная функция загрузки данных
+// Загрузка данных
 async function loadDatabase() {
     try {
         console.log('📥 Загрузка данных из Google Sheets...');
+        
         const response = await fetch(CSV_URL, { 
             cache: 'no-store',
             headers: {
