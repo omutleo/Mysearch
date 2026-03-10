@@ -11,7 +11,7 @@ let currentCategoryTitle, currentCategoryCount, backToDashboard;
 let totalSuppliersEl, totalCategoriesEl, loginModal, loginFormModal, loginErrorModal;
 
 // ============================================
-// INITIALIZATION
+// INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', async function() {
     // Ждём загрузки данных из data.js
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // ============================================
-// LOGIN PAGE
+// LOGIN
 // ============================================
 function initLoginPage() {
     loginForm = document.getElementById('login-form');
@@ -47,8 +47,7 @@ function initLoginPage() {
 }
 
 function checkAuth() {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true' && loginScreen && appScreen) {
+    if (sessionStorage.getItem('isLoggedIn') === 'true' && loginScreen && appScreen) {
         window.location.href = 'index.html';
     }
 }
@@ -60,16 +59,14 @@ function handleLogin() {
     if (username === 'admin' && password === '20hyptec26') {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = 'index.html';
-    } else {
-        if (loginError) {
-            loginError.style.display = 'block';
-            setTimeout(() => { loginError.style.display = 'none'; }, 3000);
-        }
+    } else if (loginError) {
+        loginError.style.display = 'block';
+        setTimeout(() => { loginError.style.display = 'none'; }, 3000);
     }
 }
 
 // ============================================
-// APP PAGE
+// APP
 // ============================================
 function initAppPage() {
     logoutBtn = document.getElementById('logout-btn');
@@ -87,8 +84,7 @@ function initAppPage() {
     loginFormModal = document.getElementById('login-form-modal');
     loginErrorModal = document.getElementById('login-error-modal');
     
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
         showApp();
     } else {
         showLoginModal();
@@ -120,11 +116,9 @@ function handleLoginModal() {
         sessionStorage.setItem('isLoggedIn', 'true');
         if (loginModal) loginModal.classList.add('hidden');
         showApp();
-    } else {
-        if (loginErrorModal) {
-            loginErrorModal.style.display = 'block';
-            setTimeout(() => { loginErrorModal.style.display = 'none'; }, 3000);
-        }
+    } else if (loginErrorModal) {
+        loginErrorModal.style.display = 'block';
+        setTimeout(() => { loginErrorModal.style.display = 'none'; }, 3000);
     }
 }
 
@@ -167,7 +161,7 @@ function showCategory(categoryName) {
     if (currentCategoryTitle) currentCategoryTitle.textContent = categoryName;
     
     const suppliers = getSuppliersByCategory(categoryName);
-    if (currentCategoryCount) currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    if (currentCategoryCount) currentCategoryCount.textContent = suppliers.length + ' поставщиков';
     
     if (dashboardView) dashboardView.classList.add('hidden');
     if (categoryView) categoryView.classList.remove('hidden');
@@ -175,12 +169,11 @@ function showCategory(categoryName) {
 }
 
 // ============================================
-// DATA FUNCTIONS
+// DATA
 // ============================================
 function getUniqueCategories() {
     if (!database || database.length === 0) return [];
-    const categories = [...new Set(database.map(item => item.equipment).filter(cat => cat))];
-    return categories.sort();
+    return [...new Set(database.map(item => item.equipment).filter(c => c))].sort();
 }
 
 function getSuppliersByCategory(category) {
@@ -190,18 +183,18 @@ function getSuppliersByCategory(category) {
 
 function searchSuppliers(query) {
     if (!database) return [];
-    const lowerQuery = query.toLowerCase();
+    const q = query.toLowerCase();
     return database.filter(item =>
-        (item.name && item.name.toLowerCase().includes(lowerQuery)) ||
-        (item.equipment && item.equipment.toLowerCase().includes(lowerQuery)) ||
-        (item.contact && item.contact.toLowerCase().includes(lowerQuery)) ||
-        (item.email && item.email.toLowerCase().includes(lowerQuery)) ||
-        (item.comments && item.comments.toLowerCase().includes(lowerQuery))
+        (item.name && item.name.toLowerCase().includes(q)) ||
+        (item.equipment && item.equipment.toLowerCase().includes(q)) ||
+        (item.contact && item.contact.toLowerCase().includes(q)) ||
+        (item.email && item.email.toLowerCase().includes(q)) ||
+        (item.comments && item.comments.toLowerCase().includes(q))
     );
 }
 
 // ============================================
-// RENDERING
+// RENDER
 // ============================================
 function renderCategories() {
     if (!categoriesContainer) return;
@@ -217,16 +210,12 @@ function renderCategories() {
         const suppliers = getSuppliersByCategory(category);
         const card = document.createElement('div');
         card.className = 'category-card';
-        card.innerHTML = `
-            <i class="fas ${categoryIcons[category] || 'fa-folder'} category-icon"></i>
-            <div class="category-title">${category}</div>
-            <div class="category-count">${suppliers.length} поставщиков</div>
-        `;
+        card.innerHTML = '<i class="fas ' + (categoryIcons[category] || 'fa-folder') + ' category-icon"></i>' +
+            '<div class="category-title">' + category + '</div>' +
+            '<div class="category-count">' + suppliers.length + ' поставщиков</div>';
         card.addEventListener('click', () => showCategory(category));
         card.setAttribute('tabindex', '0');
-        card.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') showCategory(category);
-        });
+        card.addEventListener('keypress', (e) => { if (e.key === 'Enter') showCategory(category); });
         categoriesContainer.appendChild(card);
     });
 }
@@ -243,23 +232,16 @@ function renderSuppliers(suppliers) {
     suppliers.forEach((supplier, index) => {
         const item = document.createElement('div');
         item.className = 'supplier-item';
-        item.style.animationDelay = `${index * 0.05}s`;
+        item.style.animationDelay = (index * 0.05) + 's';
         
-        let detailsHTML = '';
-        if (supplier.contact) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-user detail-icon"></i><div><div class="detail-label">Контактное лицо</div><div class="detail-text">${supplier.contact}</div></div></div>`;
-        }
-        if (supplier.email) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-envelope detail-icon"></i><div><div class="detail-label">Почта</div><div class="detail-text">${supplier.email}</div></div></div>`;
-        }
-        if (supplier.equipment) {
-            detailsHTML += `<div class="detail-item"><i class="fas fa-cogs detail-icon"></i><div><div class="detail-label">Оборудование</div><div class="detail-text">${supplier.equipment}</div></div></div>`;
-        }
+        let details = '';
+        if (supplier.contact) details += '<div class="detail-item"><i class="fas fa-user detail-icon"></i><div><div class="detail-label">Контактное лицо</div><div class="detail-text">' + supplier.contact + '</div></div></div>';
+        if (supplier.email) details += '<div class="detail-item"><i class="fas fa-envelope detail-icon"></i><div><div class="detail-label">Почта</div><div class="detail-text">' + supplier.email + '</div></div></div>';
+        if (supplier.equipment) details += '<div class="detail-item"><i class="fas fa-cogs detail-icon"></i><div><div class="detail-label">Оборудование</div><div class="detail-text">' + supplier.equipment + '</div></div></div>';
         
-        const copyBtn = supplier.email ? 
-            `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email"><i class="fas fa-copy"></i> Копировать</button>` : '';
+        const copyBtn = supplier.email ? '<button class="copy-email-btn" data-email="' + supplier.email + '" title="Копировать email"><i class="fas fa-copy"></i> Копировать</button>' : '';
         
-        item.innerHTML = `<div class="supplier-name">${supplier.name}</div><div class="supplier-details">${detailsHTML}</div>${copyBtn}`;
+        item.innerHTML = '<div class="supplier-name">' + supplier.name + '</div><div class="supplier-details">' + details + '</div>' + copyBtn;
         suppliersContainer.appendChild(item);
     });
     
@@ -272,47 +254,43 @@ function renderSuppliers(suppliers) {
 }
 
 // ============================================
-// COPY TO CLIPBOARD
+// COPY
 // ============================================
 function copyToClipboard(text, button) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => {
-            showCopyNotification(button, 'Email скопирован!');
-        }).catch(() => {
-            fallbackCopyToClipboard(text, button);
-        });
+        navigator.clipboard.writeText(text).then(() => showCopyNotification(button, 'Email скопирован!')).catch(() => fallbackCopy(text, button));
     } else {
-        fallbackCopyToClipboard(text, button);
+        fallbackCopy(text, button);
     }
 }
 
-function fallbackCopyToClipboard(text, button) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.select();
+function fallbackCopy(text, button) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-999999px';
+    document.body.appendChild(ta);
+    ta.select();
     try {
         document.execCommand('copy');
         showCopyNotification(button, 'Email скопирован!');
-    } catch (err) {
+    } catch (e) {
         showCopyNotification(button, 'Ошибка копирования', true);
     }
-    document.body.removeChild(textArea);
+    document.body.removeChild(ta);
 }
 
-function showCopyNotification(button, message, isError = false) {
-    const notification = document.createElement('div');
-    notification.className = 'copy-notification' + (isError ? ' error' : '');
-    notification.textContent = message;
-    const rect = button.getBoundingClientRect();
-    notification.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.bottom + 10}px;z-index:10000;`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
+function showCopyNotification(button, message, isError) {
+    const n = document.createElement('div');
+    n.className = 'copy-notification' + (isError ? ' error' : '');
+    n.textContent = message;
+    const r = button.getBoundingClientRect();
+    n.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + (r.bottom + 10) + 'px;z-index:10000;';
+    document.body.appendChild(n);
+    setTimeout(() => n.classList.add('show'), 10);
     setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => { if (document.body.contains(notification)) document.body.removeChild(notification); }, 300);
+        n.classList.remove('show');
+        setTimeout(() => { if (document.body.contains(n)) document.body.removeChild(n); }, 300);
     }, 2000);
 }
 
@@ -334,8 +312,8 @@ function handleSearch(e) {
     if (currentCategory) {
         renderSuppliers(filtered.filter(item => item.equipment === currentCategory));
     } else {
-        if (currentCategoryTitle) currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
-        if (currentCategoryCount) currentCategoryCount.textContent = `${filtered.length} найдено`;
+        if (currentCategoryTitle) currentCategoryTitle.textContent = 'Результаты поиска: "' + query + '"';
+        if (currentCategoryCount) currentCategoryCount.textContent = filtered.length + ' найдено';
         if (dashboardView) dashboardView.classList.add('hidden');
         if (categoryView) categoryView.classList.remove('hidden');
         renderSuppliers(filtered);
@@ -343,13 +321,13 @@ function handleSearch(e) {
 }
 
 // ============================================
-// REFRESH DATA
+// REFRESH
 // ============================================
 async function handleRefreshData() {
-    const refreshBtn = document.getElementById('refresh-data-btn');
-    if (refreshBtn) {
-        refreshBtn.disabled = true;
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    const btn = document.getElementById('refresh-data-btn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     }
     try {
         await loadDatabase();
@@ -360,13 +338,13 @@ async function handleRefreshData() {
             showDashboard();
         }
         showNotification('✅ Данные обновлены!', 'success');
-    } catch (error) {
-        console.error('Ошибка обновления:', error);
-        showNotification('❌ Ошибка обновления данных', 'error');
+    } catch (e) {
+        console.error('Ошибка:', e);
+        showNotification('❌ Ошибка обновления', 'error');
     } finally {
-        if (refreshBtn) {
-            refreshBtn.disabled = false;
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i>';
         }
     }
 }
@@ -374,22 +352,22 @@ async function handleRefreshData() {
 // ============================================
 // NOTIFICATIONS
 // ============================================
-function showNotification(message, type = 'info') {
+function showNotification(message, type) {
     document.querySelectorAll('.app-notification').forEach(n => n.remove());
-    const notification = document.createElement('div');
-    notification.className = `app-notification ${type}`;
-    notification.style.cssText = `position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:8px;color:white;font-weight:500;z-index:10000;animation:slideIn 0.3s ease;background:${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};box-shadow:0 4px 12px rgba(0,0,0,0.2);`;
-    notification.textContent = message;
-    document.body.appendChild(notification);
+    const n = document.createElement('div');
+    n.className = 'app-notification ' + (type || 'info');
+    n.style.cssText = 'position:fixed;top:20px;right:20px;padding:15px 25px;border-radius:8px;color:white;font-weight:500;z-index:10000;animation:slideIn 0.3s ease;background:' + (type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8') + ';box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+    n.textContent = message;
+    document.body.appendChild(n);
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => { if (document.body.contains(notification)) document.body.removeChild(notification); }, 300);
+        n.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => { if (document.body.contains(n)) document.body.removeChild(n); }, 300);
     }, 2500);
 }
 
 if (!document.getElementById('notification-animations')) {
-    const style = document.createElement('style');
-    style.id = 'notification-animations';
-    style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
-    document.head.appendChild(style);
+    const s = document.createElement('style');
+    s.id = 'notification-animations';
+    s.textContent = '@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}';
+    document.head.appendChild(s);
 }
