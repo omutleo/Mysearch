@@ -67,54 +67,15 @@ function initLoginPage() {
 // ============================================
 // APP PAGE INITIALIZATION
 // ============================================
-function initAppPage() {
-    // Get DOM elements
+async function initAppPage() {
+    // ... (получение DOM элементов остается без изменений) ...
     logoutBtn = document.getElementById('logout-btn');
     globalSearch = document.getElementById('global-search');
     dashboardView = document.getElementById('dashboard-view');
     categoryView = document.getElementById('category-view');
     categoriesContainer = document.getElementById('categories-container');
-    suppliersContainer = document.getElementById('suppliers-container');
-    currentCategoryTitle = document.getElementById('current-category-title');
-    currentCategoryCount = document.getElementById('current-category-count');
-    backToDashboard = document.getElementById('back-to-dashboard');
-    totalSuppliersEl = document.getElementById('total-suppliers');
-    totalCategoriesEl = document.getElementById('total-categories');
-    loginModal = document.getElementById('login-modal');
-    loginFormModal = document.getElementById('login-form-modal');
-    loginErrorModal = document.getElementById('login-error-modal');
-    
-    // Check authentication
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    
-    if (isLoggedIn === 'true') {
-        showApp();
-    } else {
-        showLoginModal();
-    }
-    
-    // Setup event listeners
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    if (backToDashboard) {
-        backToDashboard.addEventListener('click', showDashboard);
-    }
-    
-    if (globalSearch) {
-        globalSearch.addEventListener('input', handleSearch);
-    }
-    
-    if (loginFormModal) {
-        loginFormModal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleLoginModal();
-            return false;
-        });
-    }
-}
+…}
+
 
 // ============================================
 // AUTHENTICATION FUNCTIONS
@@ -180,73 +141,21 @@ function showLoginModal() {
 // ============================================
 // APP DISPLAY FUNCTIONS
 // ============================================
-function showApp() {
+async function showApp() {
+    // 1. Сначала загружаем данные из Google Таблицы
+    await loadDatabase();
+    
     if (loginModal) {
-        loginModal.classList.add('hidden');
-    }
-    if (appScreen) {
-        appScreen.classList.remove('hidden');
-    }
-    
-    // Get unique categories
-    const categories = getUniqueCategories();
-    
-    // Update stats
-    if (totalSuppliersEl) {
-        totalSuppliersEl.textContent = allSuppliers.length;
+…    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = database.length;
     }
     if (totalCategoriesEl) {
         totalCategoriesEl.textContent = categories.length;
     }
-    
+
     // Render categories
     renderCategories();
 }
-
-function showDashboard() {
-    currentCategory = null;
-    if (dashboardView) {
-        dashboardView.classList.remove('hidden');
-    }
-    if (categoryView) {
-        categoryView.classList.add('hidden');
-    }
-    if (globalSearch) {
-        globalSearch.value = '';
-    }
-    
-    // Update stats
-    const categories = getUniqueCategories();
-    if (totalSuppliersEl) {
-        totalSuppliersEl.textContent = allSuppliers.length;
-    }
-    if (totalCategoriesEl) {
-        totalCategoriesEl.textContent = categories.length;
-    }
-    
-    renderCategories();
-}
-
-function showCategory(categoryName) {
-    currentCategory = categoryName;
-    if (currentCategoryTitle) {
-        currentCategoryTitle.textContent = categoryName;
-    }
-    const suppliers = getSuppliersByCategory(categoryName);
-    if (currentCategoryCount) {
-        currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
-    }
-    
-    if (dashboardView) {
-        dashboardView.classList.add('hidden');
-    }
-    if (categoryView) {
-        categoryView.classList.remove('hidden');
-    }
-    
-    renderSuppliers(suppliers);
-}
-
 // ============================================
 // DATA FUNCTIONS
 // ============================================
